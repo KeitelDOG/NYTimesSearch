@@ -4,13 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
  * Created by KeitelRobespierre on 7/20/2016.
  */
-public class Article {
+public class Article implements Serializable {
 
     String webUrl;
     String headLine;
