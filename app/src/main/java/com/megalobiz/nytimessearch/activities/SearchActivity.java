@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -19,6 +20,7 @@ import com.loopj.android.http.RequestParams;
 import com.megalobiz.nytimessearch.R;
 import com.megalobiz.nytimessearch.adapters.ArticleArrayAdapter;
 import com.megalobiz.nytimessearch.models.Article;
+import com.megalobiz.nytimessearch.models.SearchSettings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,8 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
 
+    SearchSettings settings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +48,16 @@ public class SearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setupSearchParameters();
         setupViews();
+    }
+
+    public void setupSearchParameters() {
+        // initialize settings with default values
+        settings = new SearchSettings();
+
+        //test filters
+        settings.addFilter("Arts");
     }
 
     public void setupViews() {
@@ -87,6 +100,7 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            showSettings();
             return true;
         }
 
@@ -105,24 +119,52 @@ public class SearchActivity extends AppCompatActivity {
         params.put("page", 0);
         params.put("q", query);
 
+        // if settings has sort oder apply sort
+        if(settings.getSortOrder() != null) {
+            params.put("sort", settings.getSortOrder());
+        }
+
+        // if settings filters contains at least one filter, apply filter
+        if(settings.getFilters().size() > 0) {
+            params.put("fq", settings.generateNewsDeskFiltersOR());
+        }
+
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-                JSONArray articleJsonResults = null;
+            Log.d("DEBUG", response.toString());
+            JSONArray articleJsonResults = null;
 
-                try {
-                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJSONArray(articleJsonResults));
-                    adapter.notifyDataSetChanged();
-                    Log.d("DEBUG", articles.toString());
+            try {
+                articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                adapter.notifyDataSetChanged();
+                Log.d("DEBUG", articles.toString());
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             }
         });
+    }
+
+    public void showSettings() {
+        //Toast.makeText(SearchActivity.this, "Settings Dialog Fragment will open", Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(this, SettingsActivity.class);
+        i.putExtra("settings", settings);
+        startActivityForResult(i, 100);
+
+    }
+
+    // Handle the result once the activity returns a result
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 100) {
+            if(resultCode == RESULT_OK) {
+                settings = (SearchSettings) data.getSerializableExtra("settings");
+                Toast.makeText(this, "sort passed: "+ settings.getSortOrder(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }

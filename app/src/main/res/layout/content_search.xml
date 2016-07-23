@@ -39,6 +39,7 @@
         android:id="@+id/gvResults"
         android:layout_below="@+id/btnSearch"
         android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="false"
         android:layout_centerHorizontal="true"
         android:numColumns="4" />
 </RelativeLayout>

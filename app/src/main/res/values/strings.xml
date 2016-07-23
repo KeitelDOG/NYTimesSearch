@@ -5,4 +5,10 @@
     <string name="search">Search</string>
     <string name="title_result">Title</string>
     <string name="title_activity_article">ArticleActivity</string>
+    <string name="search_parameters_label">Change your Search Parameters</string>
+    <string name="cancel">Cancel</string>
+    <string name="sort">Sort</string>
+    <string name="newest">Newest</string>
+    <string name="oldest">Oldest</string>
+    <string name="ok">Ok</string>
 </resources>
