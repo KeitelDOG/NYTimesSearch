@@ -44,10 +44,12 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         imageView.setImageResource(0);
 
         // find other views
-        TextView tvTitle = (TextView) convertView.findViewById((R.id.tvTitle));
+        TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+        TextView tvNewsDesk = (TextView) convertView.findViewById(R.id.tvNewsDesk);
 
         //Set views values
         tvTitle.setText(article.getHeadLine());
+        tvNewsDesk.setText(article.getNewsDesk());
 
         // populate the thumbnail image
         // remote download the image in background

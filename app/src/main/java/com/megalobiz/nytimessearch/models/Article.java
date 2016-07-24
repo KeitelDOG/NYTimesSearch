@@ -20,11 +20,13 @@ public class Article implements Serializable {
     String leadParagraph;
     String source;
     SimpleDateFormat pubDate;
+    String newsDesk;
 
     public Article(JSONObject jsonObject) {
         try {
             this.webUrl = jsonObject.getString("web_url");
             this.headLine = jsonObject.getJSONObject("headline").getString("main");
+            this.newsDesk = jsonObject.getString("news_desk");
 
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
 
@@ -74,6 +76,10 @@ public class Article implements Serializable {
 
     public SimpleDateFormat getPubDate() {
         return pubDate;
+    }
+
+    public String getNewsDesk() {
+        return newsDesk;
     }
 
     public static ArrayList<Article> fromJSONArray(JSONArray array) {

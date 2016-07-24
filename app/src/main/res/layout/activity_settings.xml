@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/search_parameters_label"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
@@ -31,16 +31,48 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="50dp"
         android:layout_below="@+id/textView"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:weightSum="1">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="80dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/begin_date"
+                android:id="@+id/tvBeginDate"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/etBeginDate"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentLeft="false"
+                android:editable="false"
+                android:inputType="date"
+                android:layout_toRightOf="@+id/tvBeginDate"
+                android:onClick="onOpenDatePicker"
+                android:layout_marginLeft="20dp"
+                android:hint="@string/choose_date" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/sort"
                 android:id="@+id/tvSort"
                 android:layout_alignParentTop="true"
@@ -71,7 +103,15 @@
                     android:text="@string/oldest"
                     android:id="@+id/rbOldest"
                     android:checked="false"
-                    android:layout_marginLeft="20dp" />
+                    android:layout_marginLeft="10dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:id="@+id/radioButton"
+                    android:checked="true"
+                    android:layout_marginLeft="10dp" />
 
             </RadioGroup>
 
@@ -79,7 +119,47 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"></RelativeLayout>
+            android:layout_height="130dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/filter_news_desk"
+                android:id="@+id/textView2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arts"
+                android:id="@+id/cbArts"
+                android:layout_below="@+id/textView2"
+                android:layout_centerHorizontal="true"
+                android:checked="false" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fashion_style"
+                android:id="@+id/cbFashion"
+                android:layout_below="@+id/cbArts"
+                android:layout_alignLeft="@+id/cbArts"
+                android:layout_alignStart="@+id/cbArts"
+                android:checked="false" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sports"
+                android:id="@+id/cbSports"
+                android:layout_below="@+id/cbFashion"
+                android:layout_alignLeft="@+id/cbFashion"
+                android:layout_alignStart="@+id/cbFashion"
+                android:checked="false" />
+        </RelativeLayout>
     </LinearLayout>
 
     <Button
@@ -100,7 +180,7 @@
         android:background="@color/colorPrimary"
         android:textColor="#FFF"
         android:onClick="onClick"
-        android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/btnCancel"
-        android:layout_toStartOf="@+id/btnCancel" />
+        android:layout_toStartOf="@+id/btnCancel"
+        android:layout_alignBottom="@+id/btnCancel" />
 </RelativeLayout>

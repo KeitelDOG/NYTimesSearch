@@ -11,4 +11,12 @@
     <string name="newest">Newest</string>
     <string name="oldest">Oldest</string>
     <string name="ok">Ok</string>
+    <string name="none">None</string>
+    <string name="filter_news_desk">News categories to display</string>
+    <string name="arts">Arts</string>
+    <string name="fashion_style"><![CDATA[Fashion & Style]]></string>
+    <string name="begin_date">Begin Date</string>
+    <string name="sports">Sports</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="news_desk">News Desk</string>
 </resources>

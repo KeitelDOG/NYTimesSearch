@@ -1,6 +1,9 @@
 package com.megalobiz.nytimessearch.models;
 
+
+
 import java.io.Serializable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -9,31 +12,27 @@ import java.util.ArrayList;
  */
 public class SearchSettings implements Serializable {
 
-    SimpleDateFormat beforeDate;
+    SimpleDateFormat beginDate;
 
-    String sortOrder;
     public enum Sort {
-        newest, oldest
+        newest, oldest, none
     }
+    Sort sortOrder;
 
     ArrayList<String> filters;
 
     public SearchSettings() {
         // apply default value to settings
+        this.sortOrder = Sort.none;
         filters = new ArrayList<String>();
     }
 
-    public SearchSettings(Sort sortOrder) {
-        this.sortOrder = sortOrder.name();
-        filters = new ArrayList<String>();
-    }
-
-    public String getSortOrder() {
+    public Sort getSortOrder() {
         return sortOrder;
     }
 
-    public SimpleDateFormat getBeforeDate() {
-        return beforeDate;
+    public SimpleDateFormat getBeginDate() {
+        return beginDate;
     }
 
     public ArrayList<String> getFilters() {
@@ -41,11 +40,11 @@ public class SearchSettings implements Serializable {
     }
 
     public void setSortOrder(Sort sortOrder) {
-        this.sortOrder = sortOrder.name();
+        this.sortOrder = sortOrder;
     }
 
-    public void setBeforeDate(SimpleDateFormat beforeDate) {
-        this.beforeDate = beforeDate;
+    public void setBeginDate(SimpleDateFormat beginDate) {
+        this.beginDate = beginDate;
     }
 
     // Add a String to apply Filter
@@ -55,10 +54,11 @@ public class SearchSettings implements Serializable {
 
     // generate a string formatted for NY times search filters using Lucene Syntax
     public String generateNewsDeskFiltersOR() {
+        //string example: news_desk:("Arts" "Fashion & Style" "Sports")
         String luceneSyntax = "news_desk:(";
 
         for(String filter : filters) {
-            luceneSyntax = luceneSyntax.concat(filter+" ");
+            luceneSyntax = luceneSyntax.concat("\""+filter+"\" ");
         }
 
         luceneSyntax = luceneSyntax.concat(")");

@@ -55,9 +55,6 @@ public class SearchActivity extends AppCompatActivity {
     public void setupSearchParameters() {
         // initialize settings with default values
         settings = new SearchSettings();
-
-        //test filters
-        settings.addFilter("Arts");
     }
 
     public void setupViews() {
@@ -120,8 +117,8 @@ public class SearchActivity extends AppCompatActivity {
         params.put("q", query);
 
         // if settings has sort oder apply sort
-        if(settings.getSortOrder() != null) {
-            params.put("sort", settings.getSortOrder());
+        if(settings.getSortOrder() != SearchSettings.Sort.none) {
+            params.put("sort", settings.getSortOrder().name());
         }
 
         // if settings filters contains at least one filter, apply filter
@@ -137,9 +134,9 @@ public class SearchActivity extends AppCompatActivity {
 
             try {
                 articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                adapter.clear();
                 adapter.addAll(Article.fromJSONArray(articleJsonResults));
                 adapter.notifyDataSetChanged();
-                Log.d("DEBUG", articles.toString());
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -150,11 +147,9 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void showSettings() {
-        //Toast.makeText(SearchActivity.this, "Settings Dialog Fragment will open", Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, SettingsActivity.class);
         i.putExtra("settings", settings);
         startActivityForResult(i, 100);
-
     }
 
     // Handle the result once the activity returns a result
@@ -162,7 +157,7 @@ public class SearchActivity extends AppCompatActivity {
         if(requestCode == 100) {
             if(resultCode == RESULT_OK) {
                 settings = (SearchSettings) data.getSerializableExtra("settings");
-                Toast.makeText(this, "sort passed: "+ settings.getSortOrder(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "sort passed: "+ settings.getSortOrder(), Toast.LENGTH_SHORT).show();
             }
         }
     }
