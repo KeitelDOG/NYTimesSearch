@@ -1,21 +1,26 @@
 package com.megalobiz.nytimessearch.activities;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.megalobiz.nytimessearch.R;
+import com.megalobiz.nytimessearch.fragments.DatePickerFragment;
 import com.megalobiz.nytimessearch.models.SearchSettings;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    SimpleDateFormat beginDate;
+    EditText etBeginDate;
 
     RadioGroup radioGroupSort;
     RadioButton rbNewest, rbOldest, radioButtonSort;
@@ -41,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void initializeSettingsObjects() {
         // begin date
-
+        etBeginDate = (EditText) findViewById(R.id.etBeginDate);
 
         // radio sort order objects
         radioGroupSort = (RadioGroup) findViewById(R.id.rgSort);
@@ -73,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public void onClick(View view) {
+    public void onSave(View view) {
 
         // set radio sort settings
         setRadioSort();
@@ -121,6 +126,28 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     public void onOpenDatePicker(View view) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    // handle the date selected
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        // store the values selected into a Calendar instance
+
+        final Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, monthOfYear);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        //String dateString = String.valueOf(c.get(c.YEAR)+"-"+c.get(c.MONTH)+"-"+c.get(c.DAY_OF_MONTH));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.format(c.getTime());
+
+        // pass the date to the view
+        etBeginDate.setText(sdf.format(sdf.getCalendar().getTime()));
+        // pass the date to the settings
+        settings.setBeginDate(sdf);
 
     }
 }

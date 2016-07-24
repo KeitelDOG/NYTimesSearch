@@ -66,4 +66,8 @@ public class SearchSettings implements Serializable {
         return luceneSyntax;
     }
 
+    // return a String of formatted Date yyyy-MM-dd for
+    public String formatBeginDate() {
+        return beginDate.format(beginDate.getCalendar().getTime());
+    }
 }
