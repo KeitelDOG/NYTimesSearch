@@ -2,15 +2,15 @@ package com.megalobiz.nytimessearch.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -21,6 +21,7 @@ import com.megalobiz.nytimessearch.R;
 import com.megalobiz.nytimessearch.adapters.ArticleArrayAdapter;
 import com.megalobiz.nytimessearch.models.Article;
 import com.megalobiz.nytimessearch.models.SearchSettings;
+import com.megalobiz.nytimessearch.utils.EndlessScrollListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,14 +33,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
-    EditText etQuery;
-    Button btnSearch;
     GridView gvResults;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
 
     SearchSettings settings;
+    String searchQuery;
+    int searchPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +51,20 @@ public class SearchActivity extends AppCompatActivity {
 
         setupSearchParameters();
         setupViews();
+
     }
 
     public void setupSearchParameters() {
         // initialize settings with default values
         settings = new SearchSettings();
-
-        //test filters
-        settings.addFilter("Arts");
     }
 
     public void setupViews() {
-        etQuery = (EditText) findViewById(R.id.etQuery);
         gvResults = (GridView) findViewById(R.id.gvResults);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<Article>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
+        searchPage = 0;
 
         // hook up listener for grid click
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,13 +80,42 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        // Attach the listener to the AdapterView onCreate
+        /*gvResults.setOnScrollListener(new EndlessScrollListener(10, 0) {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                //endlesslyLoadArticles(page);
+                return true;
+            }
+        });*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchQuery = query;
+                searchArticles();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -107,21 +134,23 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(View view) {
-        String query = etQuery.getText().toString();
-
+    public void searchArticles() {
         AsyncHttpClient client = new AsyncHttpClient();
 
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 
         RequestParams params = new RequestParams();
-        params.put("api-key", "e99049db3b3b4269bf5ad04308f38415");
-        params.put("page", 0);
-        params.put("q", query);
+        params.put("page", searchPage);
+        params.put("q", searchQuery);
+
+        // if settings begin date has been set apply begin_date
+        if(settings.getBeginDate() != null && settings.getBeginDate().getCalendar() != null) {
+            params.put("begin_date", settings.formatBeginDate());
+        }
 
         // if settings has sort oder apply sort
-        if(settings.getSortOrder() != null) {
-            params.put("sort", settings.getSortOrder());
+        if(settings.getSortOrder() != SearchSettings.Sort.none) {
+            params.put("sort", settings.getSortOrder().name());
         }
 
         // if settings filters contains at least one filter, apply filter
@@ -129,32 +158,35 @@ public class SearchActivity extends AppCompatActivity {
             params.put("fq", settings.generateNewsDeskFiltersOR());
         }
 
+        params.put("api-key", "e99049db3b3b4269bf5ad04308f38415");
+
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            Log.d("DEBUG", response.toString());
-            JSONArray articleJsonResults = null;
+                Log.d("DEBUG", response.toString());
+                JSONArray articleJsonResults = null;
 
-            try {
-                articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                adapter.addAll(Article.fromJSONArray(articleJsonResults));
-                adapter.notifyDataSetChanged();
-                Log.d("DEBUG", articles.toString());
+                try {
+                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    if (searchPage == 0)
+                        adapter.clear();
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                    adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
     }
 
+
     public void showSettings() {
-        //Toast.makeText(SearchActivity.this, "Settings Dialog Fragment will open", Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, SettingsActivity.class);
         i.putExtra("settings", settings);
         startActivityForResult(i, 100);
-
     }
 
     // Handle the result once the activity returns a result
@@ -162,7 +194,7 @@ public class SearchActivity extends AppCompatActivity {
         if(requestCode == 100) {
             if(resultCode == RESULT_OK) {
                 settings = (SearchSettings) data.getSerializableExtra("settings");
-                Toast.makeText(this, "sort passed: "+ settings.getSortOrder(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "sort passed: "+ settings.getSortOrder(), Toast.LENGTH_SHORT).show();
             }
         }
     }
