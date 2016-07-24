@@ -142,10 +142,9 @@ public class SettingsActivity extends AppCompatActivity implements DatePickerDia
 
         //String dateString = String.valueOf(c.get(c.YEAR)+"-"+c.get(c.MONTH)+"-"+c.get(c.DAY_OF_MONTH));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        sdf.format(c.getTime());
 
         // pass the date to the view
-        etBeginDate.setText(sdf.format(sdf.getCalendar().getTime()));
+        etBeginDate.setText(sdf.format(c.getTime()));
         // pass the date to the settings
         settings.setBeginDate(sdf);
 

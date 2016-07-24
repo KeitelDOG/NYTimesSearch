@@ -49,7 +49,8 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
 
         //Set views values
         tvTitle.setText(article.getHeadLine());
-        tvNewsDesk.setText(article.getNewsDesk());
+        if(!article.getNewsDesk().equals("null"))
+            tvNewsDesk.setText(article.getNewsDesk());
 
         // populate the thumbnail image
         // remote download the image in background

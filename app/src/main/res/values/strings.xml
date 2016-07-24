@@ -18,6 +18,6 @@
     <string name="begin_date">Begin Date</string>
     <string name="sports">Sports</string>
     <string name="choose_date">Choose Date</string>
-    <string name="news_desk">News Desk</string>
+    <string name="news_desk">Unknown</string>
     <string name="title_activity_settings">Settings</string>
 </resources>

@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -23,6 +21,7 @@ import com.megalobiz.nytimessearch.R;
 import com.megalobiz.nytimessearch.adapters.ArticleArrayAdapter;
 import com.megalobiz.nytimessearch.models.Article;
 import com.megalobiz.nytimessearch.models.SearchSettings;
+import com.megalobiz.nytimessearch.utils.EndlessScrollListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,14 +33,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
-    EditText etQuery;
-    Button btnSearch;
     GridView gvResults;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
 
     SearchSettings settings;
+    String searchQuery;
+    int searchPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +51,7 @@ public class SearchActivity extends AppCompatActivity {
 
         setupSearchParameters();
         setupViews();
+
     }
 
     public void setupSearchParameters() {
@@ -64,6 +64,7 @@ public class SearchActivity extends AppCompatActivity {
         articles = new ArrayList<Article>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
+        searchPage = 0;
 
         // hook up listener for grid click
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,6 +80,17 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        // Attach the listener to the AdapterView onCreate
+        /*gvResults.setOnScrollListener(new EndlessScrollListener(10, 0) {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                //endlesslyLoadArticles(page);
+                return true;
+            }
+        });*/
     }
 
     @Override
@@ -92,7 +104,8 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchArticles(query);
+                searchQuery = query;
+                searchArticles();
                 return true;
             }
 
@@ -121,14 +134,14 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void searchArticles(String query) {
+    public void searchArticles() {
         AsyncHttpClient client = new AsyncHttpClient();
 
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 
         RequestParams params = new RequestParams();
-        params.put("page", 0);
-        params.put("q", query);
+        params.put("page", searchPage);
+        params.put("q", searchQuery);
 
         // if settings begin date has been set apply begin_date
         if(settings.getBeginDate() != null && settings.getBeginDate().getCalendar() != null) {
@@ -155,7 +168,9 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.clear();
+                    if (searchPage == 0)
+                        adapter.clear();
+
                     adapter.addAll(Article.fromJSONArray(articleJsonResults));
                     adapter.notifyDataSetChanged();
 
@@ -166,6 +181,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
+
 
     public void showSettings() {
         Intent i = new Intent(this, SettingsActivity.class);
