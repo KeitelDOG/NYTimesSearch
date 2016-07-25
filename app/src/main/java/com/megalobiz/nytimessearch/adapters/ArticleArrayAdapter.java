@@ -57,7 +57,9 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         String thumbnail = article.getThumbnail();
 
         if(!TextUtils.isEmpty(thumbnail)) {
-            Picasso.with(getContext()).load(thumbnail).into(imageView);
+            Picasso.with(getContext()).load(thumbnail)
+                    .placeholder(R.drawable.article_placeholder)
+                    .into(imageView);
         }
 
         return convertView;
