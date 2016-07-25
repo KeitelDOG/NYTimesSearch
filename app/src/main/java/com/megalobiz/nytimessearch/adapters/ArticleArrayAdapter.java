@@ -59,6 +59,10 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         if(!TextUtils.isEmpty(thumbnail)) {
             Picasso.with(getContext()).load(thumbnail)
                     .placeholder(R.drawable.article_placeholder)
+                    .error(R.drawable.article_placeholder)
+                    .into(imageView);
+        } else {
+            Picasso.with(getContext()).load(R.drawable.article_placeholder)
                     .into(imageView);
         }
 

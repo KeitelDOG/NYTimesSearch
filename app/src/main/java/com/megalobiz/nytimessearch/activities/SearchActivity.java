@@ -166,7 +166,7 @@ public class SearchActivity extends AppCompatActivity {
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
+                //Log.d("DEBUG", response.toString());
                 JSONArray articleJsonResults = null;
 
                 try {
