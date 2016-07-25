@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:id="@+id/ivImage"
-        android:src="@drawable/article_placeholder"
-        android:scaleType="center"/>
-
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="76dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:text="@string/title_result"/>
+        android:orientation="vertical"
+        android:background="#FFF"
+        android:layout_margin="5dp">
 
-    <TextView
-        android:layout_width="76dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/news_desk"
-        android:id="@+id/tvNewsDesk"
-        android:textSize="11sp"
-        android:textStyle="italic"
-        android:textColor="#000"
-        android:maxLines="1"
-        android:layout_marginBottom="10dp" />
+        <TextView
+            android:layout_width="75dp"
+            android:layout_height="15dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/news_desk"
+            android:id="@+id/tvNewsDesk"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:textColor="#EEE"
+            android:maxLines="1"
+            android:layout_marginBottom="0dp"
+            android:background="#396" />
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="65dp"
+            android:id="@+id/ivImage"
+            android:src="@drawable/article_placeholder"
+            android:scaleType="center"/>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="76dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="@string/title_result"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
