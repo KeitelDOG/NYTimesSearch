@@ -90,8 +90,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 searchPage = page;
                 searchArticles(false);
-                Toast.makeText(SearchActivity.this, "LoadMore "+searchPage+" - "+totalItemsCount, Toast.LENGTH_LONG).show();
-
+                //Toast.makeText(SearchActivity.this, "LoadMore "+searchPage+" - "+totalItemsCount, Toast.LENGTH_LONG).show();
                 return true;
             }
         });
