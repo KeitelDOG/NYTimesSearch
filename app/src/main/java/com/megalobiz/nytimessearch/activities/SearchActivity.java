@@ -82,15 +82,18 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         // Attach the listener to the AdapterView onCreate
-        /*gvResults.setOnScrollListener(new EndlessScrollListener(10, 0) {
+        gvResults.setOnScrollListener(new EndlessScrollListener(5, 0) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
-                //endlesslyLoadArticles(page);
+
+                searchPage = page;
+                searchArticles(false);
+                //Toast.makeText(SearchActivity.this, "LoadMore "+searchPage+" - "+totalItemsCount, Toast.LENGTH_LONG).show();
                 return true;
             }
-        });*/
+        });
     }
 
     @Override
@@ -105,7 +108,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchQuery = query;
-                searchArticles();
+                searchArticles(true);
                 return true;
             }
 
@@ -134,7 +137,7 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void searchArticles() {
+    public void searchArticles(final Boolean clear) {
         AsyncHttpClient client = new AsyncHttpClient();
 
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -168,7 +171,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    if (searchPage == 0)
+                    if (clear)
                         adapter.clear();
 
                     adapter.addAll(Article.fromJSONArray(articleJsonResults));
