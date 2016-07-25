@@ -18,6 +18,7 @@ Time spent: 13 hours
 
 ### Optional
 * [x] Strecth: Use the ActionBar SearchView or custom layout as the query box instead of an EditText.
+* [x] Stretch: Improve the user interface and experiment with image assets and/or styling and coloring
 
 ## Video preview of what it does
 Here's a video of the app running:
